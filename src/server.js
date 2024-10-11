@@ -1,6 +1,8 @@
 import express from 'express';
 const port = process.env.PORT || 8081;
 //
+import 'dotenv/config';
+
 import bodyParser from 'body-parser';
 //
 //import session from 'express-session';
