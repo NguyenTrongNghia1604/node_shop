@@ -22,6 +22,7 @@ export const redisClient = new Redis({
         port: process.env.REDIS_PORT,
         reconnectOnError: () => true, // Tự động thử lại khi có lỗi
         socketType: 'tcp', // Đảm bảo rằng kết nối qua giao thức TCP
+        tls: true, // Nếu Redis yêu cầu kết nối bảo mật
     },
 });
 
