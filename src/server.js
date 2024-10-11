@@ -1,5 +1,5 @@
 import express from 'express';
-const port = process.env.PORT || 10000;
+const port = process.env.PORT || 8081;
 //
 import bodyParser from 'body-parser';
 //
@@ -14,10 +14,10 @@ import initRestFullApi from './router/restFullApi';
 //
 
 export const redisClient = new Redis({
-    password: 'VUTW1VyP9sVBupZs7BnvDWWKrJmilQK8' || process.env.PASS,
+    password: process.env.PASS,
     socket: {
-        host: 'redis-11025.c1.ap-southeast-1-1.ec2.redns.redis-cloud.com',
-        port: 11025,
+        host: process.env.REDIS_HOST,
+        port: process.env.REDIS_PORT,
     },
 });
 
@@ -71,7 +71,7 @@ app.use(express.static('./src/public'));
 
 app.use(
     cors({
-        origin: 'http://localhost:3003',
+        origin: process.env.REACT_URL,
         methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
         preflightContinue: false,
         optionsSuccessStatus: 204,
