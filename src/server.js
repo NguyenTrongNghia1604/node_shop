@@ -16,12 +16,20 @@ import initRestFullApi from './router/restFullApi';
 //
 //import checkConnection from './config/connectDB';
 
+const client = createClient({
+    password: 'VUTW1VyP9sVBupZs7BnvDWWKrJmilQK8' || process.env.PASS,
+    socket: {
+        host: 'redis-11025.c1.ap-southeast-1-1.ec2.redns.redis-cloud.com',
+        port: 11025,
+    },
+});
+
 const app = express();
 
 app.use(
     session({
         secret: 'keyboard cat',
-        store: new RedisStore({ client: clientRedis }),
+        store: new RedisStore({ client: client }),
         resave: false, // có nghĩa là đặt lại session cho mỗi yêu cầu, Giả sử gằng cookie hết hạn sau 10p thì nó sẻ đặt thêm 10p nữa cho mỗi lần request sau.
         saveUninitialized: true, // có nghĩa là bất kì có cookie session hay không mỗi khi cookie và session yêu cầu thì nó được đánh dấu bởi connect.sid theo yêu cầu mặt định
         //saveUninitialized: false, // Chỉ lưu session khi có dữ liệu
