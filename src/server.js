@@ -15,16 +15,17 @@ import configCors from './config/cors';
 import initRestFullApi from './router/restFullApi';
 //
 
-export const redisClient = new Redis({
-    password: process.env.PASS,
-    socket: {
-        host: process.env.REDIS_HOST,
-        port: process.env.REDIS_PORT,
-        reconnectOnError: () => true, // Tự động thử lại khi có lỗi
-        socketType: 'tcp', // Đảm bảo rằng kết nối qua giao thức TCP
-        tls: true, // Nếu Redis yêu cầu kết nối bảo mật
-    },
-});
+// export const redisClient = new Redis({
+//     password: process.env.PASS,
+//     socket: {
+//         host: process.env.REDIS_HOST,
+//         port: process.env.REDIS_PORT,
+//         reconnectOnError: () => true, // Tự động thử lại khi có lỗi
+//         socketType: 'tcp', // Đảm bảo rằng kết nối qua giao thức TCP
+//         tls: true, // Nếu Redis yêu cầu kết nối bảo mật
+//     },
+// });
+export const redisClient = new Redis('redis://red-cs4het5svqrc738c7t9g:6379');
 
 console.log('REDIS_HOST', process.env.REDIS_HOST);
 console.log('REDIS_PORT', process.env.REDIS_PORT);
