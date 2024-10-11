@@ -92,6 +92,7 @@ const login = async (req, res) => {
         let data = await serviceAuth.login(req, req.body);
         if (data) {
             console.log('thành côgn', data);
+            console.log('check session', req.session);
             return res.status(200).json({
                 EM: data.EM,
                 EC: data.EC,
@@ -111,7 +112,8 @@ const login = async (req, res) => {
 
 const checkLogin = async (req, res) => {
     try {
-        let data = await serviceAuth.checkLogin(req);
+        let userId = req.query.userId;
+        let data = await serviceAuth.checkLogin(req, userId);
         if (data) {
             return res.status(200).json({
                 EM: data.EM,

@@ -4,19 +4,16 @@ const port = process.env.PORT || 8081;
 import bodyParser from 'body-parser';
 //
 import session from 'express-session';
-import { Redis } from 'ioredis';
+import Redis from 'ioredis';
 import RedisStore from 'connect-redis';
-const clientRedis = new Redis();
-//const clientRedis = Redis.createClient(); // Tạo client kết nối với Redis;
 //
 import cors from 'cors';
 import configCors from './config/cors';
 //
 import initRestFullApi from './router/restFullApi';
 //
-//import checkConnection from './config/connectDB';
 
-const client = createClient({
+export const redisClient = new Redis({
     password: 'VUTW1VyP9sVBupZs7BnvDWWKrJmilQK8' || process.env.PASS,
     socket: {
         host: 'redis-11025.c1.ap-southeast-1-1.ec2.redns.redis-cloud.com',
@@ -26,17 +23,35 @@ const client = createClient({
 
 const app = express();
 
+redisClient.on('connect', () => {
+    console.log('Connected to Redis');
+});
+
+redisClient.on('error', (err) => {
+    console.error('Redis error:', err);
+});
 app.use(
     session({
         secret: 'keyboard cat',
-        store: new RedisStore({ client: client }),
+        store: new RedisStore({ client: redisClient }),
         resave: false, // có nghĩa là đặt lại session cho mỗi yêu cầu, Giả sử gằng cookie hết hạn sau 10p thì nó sẻ đặt thêm 10p nữa cho mỗi lần request sau.
         saveUninitialized: true, // có nghĩa là bất kì có cookie session hay không mỗi khi cookie và session yêu cầu thì nó được đánh dấu bởi connect.sid theo yêu cầu mặt định
         //saveUninitialized: false, // Chỉ lưu session khi có dữ liệu
         cookie: {
-            secure: false, // nếu nó là true thì nó chạy trong https, còn false thì nó chạy trong http
+            secure: true, // nếu nó là true thì nó chạy trong https, còn false thì nó chạy trong http
             httpOnly: true,
             maxAge: 7 * 24 * 60 * 60 * 1000, // 7 ngày
+        },
+        // log when the session is saved
+        save: (req, res, next) => {
+            req.session.save((err) => {
+                if (err) {
+                    console.error('Lỗi khi lưu session:', err);
+                } else {
+                    console.log('Session được lưu thành công vào Redis:', req.session);
+                }
+                next();
+            });
         },
     }),
 );
@@ -62,14 +77,6 @@ app.use(
         optionsSuccessStatus: 204,
     }),
 );
-
-clientRedis.on('connect', () => {
-    console.log('Connected to Redis');
-});
-
-clientRedis.on('error', (err) => {
-    console.error('Redis error:', err);
-});
 
 //
 initRestFullApi(app);

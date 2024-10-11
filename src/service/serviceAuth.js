@@ -1,8 +1,9 @@
 //
 import db from '../models/index';
 const jwt = require('jsonwebtoken');
-// const events = require('events');
-// events.EventEmitter.defaultMaxListeners = 20; // Tăng giới hạn từ 10 lên 20
+
+import { redisClient } from '../server';
+
 import { v4 as uuidv4 } from 'uuid';
 import bcrypt from 'bcryptjs';
 const salt = bcrypt.genSaltSync(10);
@@ -161,12 +162,25 @@ const login = async (req, body) => {
         if (!ckPass) {
             return { EM: 'mật khẩu không đúng ', EC: -1, DT: '' };
         }
+        const sessionKey = `session:${user.userId}`;
         // Lưu thông tin vào session nếu đăng nhập thành công
-        req.session.userId = user.userId;
-        req.session.role = user.role;
-        req.session.fullName = user.fullName;
-        req.session.images = user.images;
-        req.session.status = true;
+        await redisClient.hmset(sessionKey, {
+            userId: user.userId,
+            role: user.role,
+            fullName: user.fullName,
+            images: user.images,
+            status: 'true',
+        });
+        await redisClient.expire(`session:${user.userId}`, 7 * 24 * 60 * 60); // 7 ngày
+        // check redis
+        const session = await redisClient.hgetall(sessionKey);
+        console.log('check redis cloud', JSON.stringify(session, null, 2));
+
+        // req.session.userId = user.userId;
+        // req.session.role = user.role;
+        // req.session.fullName = user.fullName;
+        // req.session.images = user.images;
+        // req.session.status = true;
         // Gửi phản hồi về phía client
         return {
             EM: 'thành coog ',
@@ -180,21 +194,26 @@ const login = async (req, body) => {
     }
 };
 
-const checkLogin = async (req) => {
+const checkLogin = async (req, userId) => {
     try {
-        console.log('check login', req.session);
-        if (req.session.userId && req.session.status) {
-            console.log('check login', req.session);
+        const sessionKey = `session:${userId}`;
+        // Kiểm tra dữ liệu trong Redis
+        const redisSession = await redisClient.hgetall(sessionKey);
+
+        if (redisSession && redisSession.status === 'true') {
+            // Cập nhật thời gian hết hạn
+            await redisClient.expire(sessionKey, 7 * 24 * 60 * 60); // 7 ngày
+
             return {
                 EM: 'OK',
                 EC: 0,
                 DT: {
-                    userId: req.session.userId,
-                    role: req.session.role,
-                    fullName: req.session.fullName,
-                    images: req.session.images,
+                    userId: redisSession.userId,
+                    role: redisSession.role,
+                    fullName: redisSession.fullName,
+                    images: redisSession.images,
                 },
-                ST: req.session.status,
+                ST: true,
             };
         } else {
             return {
