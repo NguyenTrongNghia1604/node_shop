@@ -23,7 +23,7 @@ module.exports = (sequelize, DataTypes) => {
         {
             sequelize,
             modelName: 'Search_keyword',
-            tableName: 'Search_keyword',
+            tableName: 'search_keyword',
         },
     );
     return Search_keyword;

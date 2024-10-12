@@ -19,7 +19,7 @@ module.exports = (sequelize, DataTypes) => {
         {
             sequelize,
             modelName: 'Type',
-            tableName: 'Type',
+            tableName: 'type',
             timestamps: false, // Thêm dòng này để tắt timestamps
         },
     );

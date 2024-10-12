@@ -21,7 +21,7 @@ module.exports = (sequelize, DataTypes) => {
         {
             sequelize,
             modelName: 'Likeproduct',
-            tableName: 'Likeproduct',
+            tableName: 'likeproduct',
             timestamps: false, // Thêm dòng này để tắt timestamps
         },
     );
