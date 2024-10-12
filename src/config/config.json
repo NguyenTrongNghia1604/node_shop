@@ -1,9 +1,9 @@
 {
     "development": {
-        "username": "root",
-        "password": "1234@abcd",
-        "database": "react_shop",
-        "host": "127.0.0.1",
+        "username": "usqzy0b77zmv7oen",
+        "password": "d5PtTohhx6uacMyaEgsg",
+        "database": "b1oyffmoqdjtrw2zdwmv",
+        "host": "b1oyffmoqdjtrw2zdwmv-mysql.services.clever-cloud.com",
         "dialect": "mysql"
     },
     "test": {
