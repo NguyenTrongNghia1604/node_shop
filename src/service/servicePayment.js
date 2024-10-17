@@ -33,7 +33,7 @@ const payment = async (req, res, body) => {
     var secretKey = 'K951B6PE1waDMi640xX08PD3vg6EkVlz';
     var orderInfo = 'pay with MoMo';
     var partnerCode = 'MOMO';
-    var redirectUrl = `${REACT_URL}/shoppingCart`;
+    var redirectUrl = `${process.env.REACT_URL}/shoppingCart`;
     var ipnUrl = `https://shop-render.onrender.com/api/v1/ipn`;
     var requestType = 'payWithMethod';
     var amount = totalPrice;
