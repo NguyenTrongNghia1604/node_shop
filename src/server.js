@@ -2,7 +2,7 @@ import express from 'express';
 const port = process.env.PORT || 8081;
 //
 import 'dotenv/config';
-
+const app = express();
 import bodyParser from 'body-parser';
 //
 //import session from 'express-session';
@@ -25,12 +25,13 @@ import initRestFullApi from './router/restFullApi';
 //         tls: true, // Nếu Redis yêu cầu kết nối bảo mật
 //     },
 // });
+
+// up
 export const redisClient = new Redis('redis://red-cs4het5svqrc738c7t9g:6379');
 
 console.log('REDIS_HOST', process.env.REDIS_HOST);
 console.log('REDIS_PORT', process.env.REDIS_PORT);
 console.log('PASS', process.env.PASS);
-const app = express();
 
 redisClient.on('connect', () => {
     console.log('Connected to Redis');

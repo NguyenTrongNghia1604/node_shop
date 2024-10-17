@@ -219,7 +219,7 @@ const checkLogin = async (req, userId) => {
             return {
                 EM: 'Đã Hết phiên đăng nhập!',
                 EC: 0,
-                ST: req.session.status,
+                ST: redisSession.status,
             };
         }
     } catch (error) {
@@ -229,11 +229,16 @@ const checkLogin = async (req, userId) => {
 };
 
 // clearSessionLogin
-const clearSessionLogin = async (req) => {
+const clearSessionLogin = async (req, userId) => {
     try {
-        req.session.destroy();
-        console.log('đăng xuất thành công ');
-        return { EM: 'Đăng xuất thành công ', EC: 0 };
+        const sessionKey = `session:${userId}`;
+        try {
+            // Xóa session từ Redis
+            await redisClient.del(sessionKey);
+            return { EM: 'Đăng xuất thành công ', EC: 0 };
+        } catch (error) {
+            console.error('Lỗi khi xóa session khỏi Redis:', error);
+        }
     } catch (error) {
         console.log(error);
         return { EM: 'Error from service', EC: -1 };

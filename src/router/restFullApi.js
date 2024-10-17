@@ -11,6 +11,12 @@ const initRestFullApi = (app) => {
     // nhận database category
     router.get('/category', apiController.getCategoryDB);
 
+    // orders
+    router.get('/orders', apiController.getOrdersDB);
+
+    // update-status
+    router.post('/update-status/:id', apiController.updateStatusDB);
+
     // login admin
     router.post('/login-admin', authController.loginAdmin);
 
@@ -88,7 +94,7 @@ const initRestFullApi = (app) => {
     router.get('/check-login', authController.checkLogin);
 
     // clear-session-login
-    router.get('/clear-session-login', authController.clearSessionLogin);
+    router.post('/clear-session-login', authController.clearSessionLogin);
 
     // thanh toán
     router.post('/payment', paymentController.payment);
@@ -102,6 +108,9 @@ const initRestFullApi = (app) => {
         serviceDB.upload.fields([{ name: 'avatar', maxCount: 1 }]),
         apiController.updataInfoUser,
     );
+
+    // xử lý nhận Orders db
+    router.get('/get-order-db', apiController.getOrdersClientDB);
 
     // xử lý like product
     router.post('/like-product', apiController.likeProduct);

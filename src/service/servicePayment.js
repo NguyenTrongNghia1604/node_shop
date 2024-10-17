@@ -34,7 +34,7 @@ const payment = async (req, res, body) => {
     var orderInfo = 'pay with MoMo';
     var partnerCode = 'MOMO';
     var redirectUrl = 'http://localhost:3003/shoppingCart';
-    var ipnUrl = `https://edd9-2402-800-6327-a201-317a-d52c-5cab-72e1.ngrok-free.app/api/v1/ipn`;
+    var ipnUrl = `https://7cba-2402-800-6311-445e-3c7e-e872-4ce3-be91.ngrok-free.app/api/v1/ipn`;
     var requestType = 'payWithMethod';
     var amount = totalPrice;
     var orderId = partnerCode + new Date().getTime();

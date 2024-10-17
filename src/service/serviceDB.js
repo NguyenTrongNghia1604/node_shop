@@ -290,7 +290,7 @@ const updataInfoUser = async (files, body) => {
 
 const ipnResualts = async (req, body) => {
     try {
-        const { resultCode, message, extraData: rawExtraData } = body;
+        const { resultCode, message, orderId, extraData: rawExtraData } = body;
         if (resultCode == 0) {
             console.log('check extraData', rawExtraData);
             let extraData = JSON.parse(rawExtraData); // Parse JSON trước khi xử lý
@@ -300,23 +300,28 @@ const ipnResualts = async (req, body) => {
             // Use Promise.all to handle asynchronous operations
             let result = await Promise.all(
                 extraData.productId.map(async (productId, index) => {
-                    let userId = extraData.userId[index];
-                    let amount = extraData.amount[index];
-                    let price = extraData.price[index];
-                    let ck = shoppingId.includes(productId);
-                    let ck1 = shoppingUserId.includes(userId);
-                    if (ck && ck1) {
-                        return db.Orders.create({
-                            userId: userId,
-                            productId: productId,
-                            amount: amount,
-                            price: price,
-                            payment_status: 'Đanh xử lý...',
-                            payment_method: 'MOMO',
-                            trading_hours: new Date().toLocaleString(),
-                        });
-                    } else {
-                        console.log('cceeeeeeeeeeeeeeeeeeeeeeee sai');
+                    try {
+                        let currentTime = new Date().toISOString().slice(0, 19).replace('T', ' '); // Định dạng phù hợp cho MySQL DATETIME
+                        let userId = extraData.userId[index];
+                        let amount = extraData.amount[index];
+                        let price = extraData.price[index];
+                        let ck = shoppingId.includes(productId);
+                        let ck1 = shoppingUserId.includes(userId);
+                        if (ck && ck1) {
+                            return db.Orders.create({
+                                user_id: userId,
+                                shoppingcart_id: productId,
+                                amount: amount,
+                                price: price,
+                                payment_status: 'Đanh xử lý...',
+                                payment_method: 'MOMO',
+                                trading_hours: currentTime,
+                            });
+                        } else {
+                            console.log('cceeeeeeeeeeeeeeeeeeeeeeee sai');
+                        }
+                    } catch (error) {
+                        console.log(error);
                     }
                 }),
             );

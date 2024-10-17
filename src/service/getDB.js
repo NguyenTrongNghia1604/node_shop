@@ -1,9 +1,46 @@
-import { Op, Sequelize } from 'sequelize';
+import { Op, Sequelize, where } from 'sequelize';
 import db from '../models/index';
 
 const categoryDB = async () => {
     try {
         let data = await db.Category.findAll();
+        if (data) {
+            return { EM: 'OK', EC: 0, DT: data };
+        }
+    } catch (error) {
+        console.log(error);
+        return { EM: 'Error from service', EC: -1, DT: '' };
+    }
+};
+
+// orders
+const getOrdersDB = async () => {
+    try {
+        let data = await db.Orders.findAll();
+        if (data) {
+            return { EM: 'OK', EC: 0, DT: data };
+        }
+    } catch (error) {
+        console.log(error);
+        return { EM: 'Error from service', EC: -1, DT: '' };
+    }
+};
+
+// updateStatusDB
+const updateStatusDB = async (id, e) => {
+    try {
+        let currentTime = new Date().toISOString().slice(0, 19).replace('T', ' '); // Định dạng phù hợp cho MySQL DATETIME
+        let data = await db.Orders.update(
+            {
+                payment_status: e[0],
+                trading_hours: currentTime,
+            },
+            {
+                where: {
+                    id: id,
+                },
+            },
+        );
         if (data) {
             return { EM: 'OK', EC: 0, DT: data };
         }
@@ -403,9 +440,14 @@ const productsCompatibleAccessoriesDB = async (req, res) => {
 // filter => là nó lấy toàn bộ dữ liệu thành 1 mảng
 // find => lấy 1 phần dữ liệu trong mảng
 // takeDataShoppingCart
-const takeDataShoppingCart = async () => {
+const takeDataShoppingCart = async (req) => {
     try {
-        let shoppingCart = await db.Shoppingcart.findAll();
+        const userId = req.headers['authorization'];
+        let shoppingCart = await db.Shoppingcart.findAll({
+            where: {
+                userId: userId,
+            },
+        });
         let productId = shoppingCart.map((item) => item.productId);
         let products = await db.Products.findAll({
             where: {
@@ -435,8 +477,64 @@ const takeDataShoppingCart = async () => {
     }
 };
 
+// xử lý nhận order client
+const getOrdersClientDB = async () => {
+    try {
+        const userId = req.headers['authorization'];
+        console.log('userID người dùng', userId);
+        let orderId = await db.Orders.findAll({
+            where: {
+                userId: userId,
+            },
+        });
+        // Dùng Promise.all: Để chờ tất cả các thao tác bất đồng bộ (async) cho mỗi giá trị trong mảng
+        let data = await Promise.all(
+            orderId.map(async (item) => {
+                let productID = await db.Shoppingcart.findOne({
+                    where: {
+                        id: item.shoppingcart_id,
+                    },
+                });
+                let id = productID ? productID : null;
+                if (id && id.productId) {
+                    // Nếu productID tồn tại, tìm sản phẩm tương ứng
+                    let product = await db.Products.findOne({
+                        where: {
+                            id: id.productId,
+                        },
+                    });
+                    // Hàm findOne() trong Sequelize chỉ trả về một đối tượng hoặc null, chứ không phải là một mảng.
+                    // Khi đối tượng là null, không thể gọi .map() trên nó, dẫn đến lỗi TypeError: Cannot read properties of null (reading 'map').
+                    // let productTitle = productID.map((product) => product.title);
+                    // Kiểm tra nếu productID không phải null
+                    let data = product ? product : null;
+
+                    return {
+                        ...item.toJSON(),
+                        productTitle: data.title,
+                        productImage: data.image,
+                        idProduct: data.id,
+                        slugProduct: data.url,
+                    };
+                } else {
+                    console.log('không có productUD');
+                }
+            }),
+        );
+        console.log('data', data);
+        if (data) {
+            return { EM: 'OK', EC: 0, DT: data };
+        }
+    } catch (error) {
+        console.log(error);
+        return { EM: 'Error from service', EC: -1, DT: '' };
+    }
+};
+
 export default {
     categoryDB,
+    getOrdersDB,
+    updateStatusDB,
 
     paginationProductsDB,
     getProductsDB,
@@ -458,4 +556,7 @@ export default {
     productsCompatibleAccessoriesDB,
     //
     takeDataShoppingCart,
+
+    //
+    getOrdersClientDB,
 };

@@ -25,6 +25,7 @@ const payment = async (req, res) => {
 const ipnResualt = async (req, res) => {
     try {
         // Log toàn bộ request để kiểm tra dữ liệu IPN từ MoMo
+        console.log('đâ chạy qua ipn resualt');
         console.log('MoMo IPN request received:', req.body);
         let data = await serviceDB.ipnResualts(req, req.body);
         if (data) {

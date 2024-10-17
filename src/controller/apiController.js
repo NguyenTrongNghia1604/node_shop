@@ -24,6 +24,50 @@ const getCategoryDB = async (req, res) => {
     }
 };
 
+// nhận order DB
+const getOrdersDB = async (req, res) => {
+    try {
+        let data = await getDB.getOrdersDB();
+        if (data) {
+            return res.status(200).json({
+                EM: data.EM,
+                EC: data.EC,
+                DT: data.DT,
+            });
+        }
+    } catch (error) {
+        console.log(error);
+        return req.status(500).json({
+            EM: 'Error from service',
+            EC: -1,
+            DT: '',
+        });
+    }
+};
+
+// updateStatusDB
+const updateStatusDB = async (req, res) => {
+    try {
+        let id = req.params.id;
+        let e = req.body;
+        let data = await getDB.updateStatusDB(id, Object.keys(e));
+        if (data) {
+            return res.status(200).json({
+                EM: data.EM,
+                EC: data.EC,
+                DT: data.DT,
+            });
+        }
+    } catch (error) {
+        console.log(error);
+        return req.status(500).json({
+            EM: 'Error from service',
+            EC: -1,
+            DT: '',
+        });
+    }
+};
+
 // nhận database products phân trang
 const getProductsDB = async (req, res) => {
     try {
@@ -209,7 +253,7 @@ const deleteShoppingCartDB = async (req, res) => {
 //takeDataShoppingCart
 const takeDataShoppingCart = async (req, res) => {
     try {
-        let data = await getDB.takeDataShoppingCart();
+        let data = await getDB.takeDataShoppingCart(req);
         if (data) {
             return res.status(200).json({
                 EM: data.EM,
@@ -501,6 +545,27 @@ const updataInfoUser = async (req, res) => {
     }
 };
 
+// xử lý nhận order db
+const getOrdersClientDB = async (req, res) => {
+    try {
+        let data = await getDB.getOrdersClientDB();
+        if (data) {
+            return res.status(200).json({
+                EM: data.EM,
+                EC: data.EC,
+                DT: data.DT,
+            });
+        }
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            EM: 'Error from service',
+            EC: -1,
+            DT: '',
+        });
+    }
+};
+
 // xử lý like product
 const likeProduct = async (req, res) => {
     try {
@@ -525,6 +590,8 @@ const likeProduct = async (req, res) => {
 
 export default {
     getCategoryDB,
+    getOrdersDB,
+    updateStatusDB,
     getProductsDB,
     createProducts,
     updateProducts,
@@ -552,5 +619,7 @@ export default {
     //
     getUserDB,
     updataInfoUser,
+
+    getOrdersClientDB,
     likeProduct,
 };

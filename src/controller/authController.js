@@ -135,7 +135,8 @@ const checkLogin = async (req, res) => {
 // clearSessionLogin
 const clearSessionLogin = async (req, res) => {
     try {
-        let data = await serviceAuth.clearSessionLogin(req);
+        let userId = req.body;
+        let data = await serviceAuth.clearSessionLogin(req, userId);
         if (data) {
             return res.status(200).json({
                 EM: data.EM,
