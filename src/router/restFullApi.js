@@ -94,7 +94,7 @@ const initRestFullApi = (app) => {
     router.get('/check-login', authController.checkLogin);
 
     // clear-session-login
-    router.post('/clear-session-login', authController.clearSessionLogin);
+    router.get('/clear-session-login', authController.clearSessionLogin);
 
     // thanh toán
     router.post('/payment', paymentController.payment);
