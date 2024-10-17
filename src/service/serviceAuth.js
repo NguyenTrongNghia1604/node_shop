@@ -232,19 +232,35 @@ const checkLogin = async (req, userId) => {
 };
 
 // clearSessionLogin
+// const clearSessionLogin = async (req, userId) => {
+//     try {
+//         const sessionKey = `session:${userId}`;
+//         try {
+//             // Xóa session từ Redis
+//             await redisClient.del(sessionKey);
+//             return { EM: 'Đăng xuất thành công ', EC: 0 };
+//         } catch (error) {
+//             console.error('Lỗi khi xóa session khỏi Redis:', error);
+//         }
+//     } catch (error) {
+//         console.log(error);
+//         return { EM: 'Error from service', EC: -1 };
+//     }
+// };
+// clearSessionLogin
 const clearSessionLogin = async (req, userId) => {
     try {
         const sessionKey = `session:${userId}`;
-        try {
-            // Xóa session từ Redis
-            await redisClient.del(sessionKey);
-            return { EM: 'Đăng xuất thành công ', EC: 0 };
-        } catch (error) {
-            console.error('Lỗi khi xóa session khỏi Redis:', error);
+        const result = await redisClient.del(sessionKey);
+        if (result === 1) {
+            return { EM: 'Đăng xuất thành công', EC: 0 };
+        } else {
+            return { EM: 'Session không tồn tại', EC: 1 };
         }
     } catch (error) {
-        console.log(error);
+        console.error('Lỗi khi xóa session khỏi Redis:', error);
         return { EM: 'Error from service', EC: -1 };
     }
 };
+
 export default { loginAdmin, checkAuthLogin, register, login, checkLogin, clearSessionLogin };
