@@ -137,6 +137,8 @@ const register = async (body) => {
             images: ' ',
             role: 2,
             type: 'Client',
+            phone: ' ',
+            address: ' ',
         });
         console.log('check auth', data);
         if (data) {
