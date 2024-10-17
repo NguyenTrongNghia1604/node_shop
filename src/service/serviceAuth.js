@@ -131,6 +131,7 @@ const register = async (body) => {
         let data = await db.User.create({
             userId: id,
             fullName: body.fullName,
+            username: body.username,
             email: body.email,
             password: password,
             role: 2,
@@ -139,6 +140,8 @@ const register = async (body) => {
         console.log('check auth', data);
         if (data) {
             return { EM: 'Đăng ký thành công', EC: 0, DT: data };
+        } else {
+            return { EM: 'Đăng ký thất bại', EC: -1, DT: '' };
         }
     } catch (error) {
         console.log(error);
