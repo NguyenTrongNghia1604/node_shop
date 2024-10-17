@@ -134,6 +134,7 @@ const register = async (body) => {
             username: body.username,
             email: body.email,
             password: password,
+            images: null,
             role: 2,
             type: 'Client',
         });
@@ -145,7 +146,7 @@ const register = async (body) => {
         }
     } catch (error) {
         console.log(error);
-        return { EM: 'Error from service', EC: -1, DT: error };
+        return { EM: `Error from service${body}`, EC: -1, DT: error };
     }
 };
 
