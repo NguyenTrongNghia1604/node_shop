@@ -134,7 +134,7 @@ const register = async (body) => {
             username: body.username,
             email: body.email,
             password: password,
-            images: null,
+            images: ' ',
             role: 2,
             type: 'Client',
         });
