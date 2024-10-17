@@ -484,7 +484,7 @@ const getOrdersClientDB = async (req) => {
         console.log('userID người dùng', userId);
         let orderId = await db.Orders.findAll({
             where: {
-                userId: userId,
+                user_id: userId,
             },
         });
         // Dùng Promise.all: Để chờ tất cả các thao tác bất đồng bộ (async) cho mỗi giá trị trong mảng
