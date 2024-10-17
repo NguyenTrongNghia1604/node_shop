@@ -548,7 +548,7 @@ const updataInfoUser = async (req, res) => {
 // xử lý nhận order db
 const getOrdersClientDB = async (req, res) => {
     try {
-        let data = await getDB.getOrdersClientDB();
+        let data = await getDB.getOrdersClientDB(req);
         if (data) {
             return res.status(200).json({
                 EM: data.EM,

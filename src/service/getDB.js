@@ -478,7 +478,7 @@ const takeDataShoppingCart = async (req) => {
 };
 
 // xử lý nhận order client
-const getOrdersClientDB = async () => {
+const getOrdersClientDB = async (req) => {
     try {
         const userId = req.headers['authorization'];
         console.log('userID người dùng', userId);
