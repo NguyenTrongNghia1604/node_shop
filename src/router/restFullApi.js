@@ -48,7 +48,7 @@ const initRestFullApi = (app) => {
         apiController.updateProducts,
     );
     // delete products
-    router.delete('/delete-products/:id', apiController.deleteProducts);
+    router.post('/delete-products/', apiController.deleteProducts);
 
     // shopping cart
     router.post('/shopping-cart', apiController.getShoppingCartDB);

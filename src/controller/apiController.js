@@ -163,7 +163,7 @@ const updateProducts = async (req, res) => {
 // delete products
 const deleteProducts = async (req, res) => {
     try {
-        let id = req.params.id;
+        let id = req.body;
         let data = await serviceDB.deleteProducts(id);
         if (data) {
             return res.status(200).json({
