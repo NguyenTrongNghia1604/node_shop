@@ -254,15 +254,13 @@ const checkLogin = async (req, userId) => {
 const clearSessionLogin = async (req, userId) => {
     try {
         const sessionKey = `session:${userId}`;
+        console.log('check session', sessionKey, userId);
         const result = await redisClient.del(sessionKey);
-        //if (result === 1) {
-        if (result) {
+        if (result === 1) {
             return { EM: 'Đăng xuất thành công', EC: 0 };
+        } else {
+            return { EM: 'Session không tồn tại', EC: 1 };
         }
-
-        // } else {
-        // return { EM: 'Session không tồn tại', EC: 1 };
-        // }
     } catch (error) {
         console.error('Lỗi khi xóa session khỏi Redis:', error);
         return { EM: 'Error from service', EC: -1 };
